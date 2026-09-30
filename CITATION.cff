@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use ClinAbstain, please cite it as below."
+title: "ClinAbstain: does a clinical AI assistant know when not to answer?"
+version: 0.4.0
+date-released: 2026-09-29
+license: MIT
+authors:
+  - family-names: Khan
+    given-names: Rakay
+repository-code: "https://github.com/rakaykhan1/clinabstain"
+keywords: [clinical AI, evaluation, abstention, selective prediction, patient safety]

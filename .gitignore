@@ -1,0 +1,10 @@
+results/*_raw.jsonl
+results/trustguide*
+results/tg_*
+private/
+__pycache__/
+.env
+*.pyc
+results/private/
+results/custom_*
+results/local_custom_*

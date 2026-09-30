@@ -1,0 +1,18 @@
+[project]
+name = "clinabstain"
+version = "0.4.0"
+description = "Open benchmark for whether clinical AI answers, abstains, escalates or flags conflicting guidance"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Rakay Khan" }]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["clinabstain"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
