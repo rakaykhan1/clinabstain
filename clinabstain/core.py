@@ -14,6 +14,8 @@ and may add a line "CONFIDENCE: <0-100>". Passages are cited as [P01].
 from __future__ import annotations
 
 import json
+import os
+import random
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -51,7 +53,11 @@ def prompt_text(passage: dict) -> str:
 
 
 def build_user_prompt(item: dict, passages: dict[str, dict]) -> str:
-    ev = "\n".join(f"[{pid}] {prompt_text(passages[pid])}" for pid in item["evidence"])
+    ids = list(item["evidence"])
+    seed = os.environ.get("CLINABSTAIN_SHUFFLE_SEED")
+    if seed:  # sensitivity check: present the same passages in a different, reproducible order
+        random.Random(f"{seed}:{item['id']}").shuffle(ids)
+    ev = "\n".join(f"[{pid}] {prompt_text(passages[pid])}" for pid in ids)
     return f"EVIDENCE\n{ev}\n\nQUESTION\n{item['question']}"
 
 

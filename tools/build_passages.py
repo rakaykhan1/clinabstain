@@ -198,7 +198,8 @@ def build_passages() -> tuple[list[dict], dict[str, str]]:
 def main() -> None:
     passages, _ = build_passages()
     out = ROOT / "data/passages.jsonl"
-    new = "\n".join(json.dumps(p, ensure_ascii=False) for p in passages) + "\n"
+    canary = (ROOT / "data/CANARY.txt").read_text(encoding="utf-8").split()[-1]  # contamination canary in every passage
+    new = "\n".join(json.dumps(p | {"canary": canary}, ensure_ascii=False) for p in passages) + "\n"
     if out.exists() and out.read_text(encoding="utf-8") != new:
         print("note: data/passages.jsonl differs from the rebuilt passages; overwriting")
     out.write_text(new, encoding="utf-8")

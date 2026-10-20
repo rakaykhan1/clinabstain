@@ -16,6 +16,7 @@ import time
 import urllib.request
 
 from .core import CLOSED_BOOK_PROMPT, SYSTEM_PROMPT, build_user_prompt
+from .provenance import SERVED_MODELS
 
 
 def _temp(temperature: float) -> dict:
@@ -29,7 +30,10 @@ def _post(url: str, headers: dict, body: dict, retries: int = 3) -> dict:
         try:
             req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", **headers})
             with urllib.request.urlopen(req, timeout=120) as r:
-                return json.loads(r.read())
+                resp = json.loads(r.read())
+            if resp.get("model"):
+                SERVED_MODELS.add(resp["model"])  # the exact snapshot the provider says it served, for provenance
+            return resp
         except Exception:  # noqa: BLE001
             if attempt == retries - 1:
                 raise

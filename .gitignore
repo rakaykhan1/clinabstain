@@ -1,4 +1,8 @@
 results/*_raw.jsonl
+!results/baseline_oracle_raw.jsonl
+# raw outputs for the public items are published in results/raw/
+!results/raw/
+!results/raw/*_raw.jsonl
 results/trustguide*
 results/tg_*
 private/

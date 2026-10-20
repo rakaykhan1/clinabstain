@@ -274,6 +274,22 @@
       0.0
     ]
   ],
+  "provenance": {
+    "model_spec": "baseline:oracle",
+    "served_models": null,
+    "started_utc": "2026-10-20T08:49:25+00:00",
+    "finished_utc": "2026-10-20T08:49:25+00:00",
+    "temperature": 0.0,
+    "api_version": null,
+    "base_url": null,
+    "clinabstain_version": "0.4.1",
+    "git_commit": "01fda74-dirty",
+    "prompt_sha256": "3176ecfa997cff8d",
+    "passage_shuffle_seed": null,
+    "python": "3.11.15",
+    "judge": null,
+    "with_heldout": false
+  },
   "by_split": {
     "dev": {
       "items": 28,
