@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use ClinAbstain, please cite it as below."
 title: "ClinAbstain: does a clinical AI assistant know when not to answer?"
-version: 0.4.1
-date-released: 2026-10-20
+version: 0.4.2
+date-released: 2026-10-21
 license: MIT
 authors:
   - family-names: Khan
