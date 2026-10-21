@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import os
 import time
+import urllib.error
 import urllib.request
 
 from .core import CLOSED_BOOK_PROMPT, SYSTEM_PROMPT, build_user_prompt
@@ -24,20 +25,35 @@ def _temp(temperature: float) -> dict:
     return {} if os.environ.get("CLINABSTAIN_TEMPERATURE", "").lower() == "default" else {"temperature": temperature}
 
 
-def _post(url: str, headers: dict, body: dict, retries: int = 3) -> dict:
+def _post(url: str, headers: dict, body: dict, retries: int | None = None) -> dict:
+    """POST with back-off. Rate limits (429) and busy servers (5xx) are retried with growing waits, honouring
+    Retry-After. CLINABSTAIN_RETRIES sets the number of attempts (default 6). CLINABSTAIN_PAUSE adds a pause in
+    seconds before every call, for providers with low rate limits. Errors never include the API key."""
+    retries = retries or int(os.environ.get("CLINABSTAIN_RETRIES", "6"))
+    pause = float(os.environ.get("CLINABSTAIN_PAUSE", "0"))
     data = json.dumps(body).encode()
     for attempt in range(retries):
+        if pause:
+            time.sleep(pause)
         try:
             req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", **headers})
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=180) as r:
                 resp = json.loads(r.read())
             if resp.get("model"):
                 SERVED_MODELS.add(resp["model"])  # the exact snapshot the provider says it served, for provenance
             return resp
-        except Exception:  # noqa: BLE001
+        except urllib.error.HTTPError as e:
+            detail = e.read()[:300].decode("utf-8", "replace")
+            retryable = e.code == 429 or e.code >= 500
+            if not retryable or attempt == retries - 1:
+                raise RuntimeError(f"HTTP {e.code}: {detail}") from None
+            wait = float(e.headers.get("Retry-After") or min(60, 5 * 2 ** attempt))
+            print(f"  HTTP {e.code}, retrying in {wait:.0f}s", flush=True)
+            time.sleep(wait)
+        except Exception:  # noqa: BLE001  network errors and timeouts
             if attempt == retries - 1:
                 raise
-            time.sleep(2 ** attempt)
+            time.sleep(min(60, 5 * 2 ** attempt))
     raise RuntimeError("unreachable")
 
 

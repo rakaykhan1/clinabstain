@@ -85,7 +85,7 @@ def main() -> None:
                 text, err = model(it, passages), False
             except Exception as e:  # noqa: BLE001  a failed call is recorded, not allowed to lose the whole run
                 text, err = "", True
-                print(f"call failed for {it['id']}: {type(e).__name__}", flush=True)
+                print(f"call failed for {it['id']}: {type(e).__name__}: {str(e)[:200]}", flush=True)
             secs = round(time.time() - t0, 2)
             p = parse_output(text)
             row = score_item(it, p, passages) | {"repeat": rep, "seconds": secs, "error": err}
