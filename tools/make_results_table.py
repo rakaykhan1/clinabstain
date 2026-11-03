@@ -18,6 +18,8 @@ ci = lambda c: f"{100*c[0]:.0f} to {100*c[1]:.0f}%"
 main_rows, local_rows = [], []
 for f in sorted((ROOT / "results").glob("*_summary.json")):
     s = json.loads(f.read_text(encoding="utf-8"))
+    if s.get("call_errors") or s.get("complete") is False:
+        raise SystemExit(f"{f.name} is incomplete ({s.get('call_errors')} failed calls): re-run with --resume first")
     if f.name.startswith("local_"):
         local_rows.append(s)
     elif "by_split" not in s or "private" not in f.parts:

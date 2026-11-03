@@ -12,3 +12,5 @@ __pycache__/
 results/private/
 results/custom_*
 results/local_custom_*
+results/*_partial.jsonl
+results/incomplete/
